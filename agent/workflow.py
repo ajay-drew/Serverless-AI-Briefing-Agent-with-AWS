@@ -123,6 +123,12 @@ class BriefingAgentWorkflow:
         if "metadata" not in state:
             state["metadata"] = {}
         
+        # Skip query analysis if search_queries already provided (real-time query)
+        if state.get("search_queries"):
+            logger.info("Search queries already provided, skipping query analysis")
+            state["metadata"]["queries_generated"] = len(state["search_queries"])
+            return state
+        
         try:
             preferences = state.get("user_preferences", {})
             queries = self.groq.analyze_preferences(preferences)

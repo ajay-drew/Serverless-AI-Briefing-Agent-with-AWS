@@ -1,11 +1,28 @@
+# LangGraph and AI dependencies
 langgraph>=0.2.0
 langchain-groq>=0.1.0
 langchain-core>=0.3.0
 tavily-python>=0.3.0
-boto3>=1.34.0
+
+# FastAPI and web server
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+
+# Database dependencies
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.9
+alembic>=1.12.0
+
+# Scheduler
+apscheduler>=3.10.4
+
+# Utilities
 pytz>=2024.1
 python-dotenv>=1.0.0
-pydantic>=2.5.0
+pydantic[email]>=2.5.0
+email-validator>=2.0.0
+
+# Testing dependencies
 pytest>=7.4.0
 pytest-cov>=4.1.0
 pytest-mock>=3.12.0

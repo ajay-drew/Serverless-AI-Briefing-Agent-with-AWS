@@ -1,84 +1,133 @@
 @echo off
-REM Simple command file to run the AI Briefing Agent
-echo ========================================
-echo AI Briefing Agent
-echo ========================================
+echo ============================================================
+echo AI Briefing Agent - Full Stack Local Development
+echo ============================================================
+echo.
+echo Starting both Backend and Frontend servers...
+echo.
+echo Backend API will be available at:
+echo   http://localhost:8080/docs (API Documentation)
+echo   http://localhost:8080/api/health (Health Check)
+echo.
+echo Frontend will be available at:
+echo   http://localhost:5173 (React App)
+echo.
+echo Press Ctrl+C in each server window to stop them
+echo ============================================================
 echo.
 
 REM Check if virtual environment exists
-set VENV_PATH=venv
-if not exist venv\Scripts\activate.bat (
-    if exist .venv\Scripts\activate.bat (
-        set VENV_PATH=.venv
-    ) else (
-        echo Creating virtual environment...
-        python -m venv venv
+if not exist .venv\Scripts\activate.bat (
+    if not exist venv\Scripts\activate.bat (
+        echo Creating Python virtual environment...
+        python -m venv .venv
         if errorlevel 1 (
             echo ERROR: Failed to create virtual environment
             echo Please make sure Python is installed and in your PATH
             pause
             exit /b 1
         )
-        echo Virtual environment created successfully.
-        echo.
-        set VENV_PATH=venv
     )
 )
 
-REM Activate virtual environment
-echo Activating virtual environment...
-call %VENV_PATH%\Scripts\activate.bat
-if errorlevel 1 (
-    echo ERROR: Failed to activate virtual environment
-    pause
-    exit /b 1
+REM Activate virtual environment (prefer .venv, fallback to venv)
+if exist .venv\Scripts\activate.bat (
+    call .venv\Scripts\activate.bat
+) else (
+    call venv\Scripts\activate.bat
 )
 
-REM Install dependencies
-echo Installing dependencies...
-pip install -q -r requirements.txt
+REM Check if Python dependencies are installed
+echo Checking Python dependencies...
+pip show fastapi >nul 2>&1
 if errorlevel 1 (
-    echo WARNING: Some dependencies may have failed to install
+    echo Installing Python dependencies...
+    pip install -r requirements.txt
+    if errorlevel 1 (
+        echo ERROR: Failed to install Python dependencies
+        pause
+        exit /b 1
+    )
 )
 
 REM Check if .env file exists
 if not exist .env (
-    echo.
     echo WARNING: .env file not found!
-    echo Please create .env file with your API keys.
-    echo You can copy .env.example to .env and add your keys.
+    echo Please create a .env file with your configuration.
+    echo You can copy .env.example as a template:
+    echo   copy .env.example .env
     echo.
     pause
     exit /b 1
 )
 
-echo.
-echo ========================================
-echo Running Agent with Email Sending...
-echo ========================================
-echo.
-echo The agent will:
-echo   1. Search for news articles
-echo   2. Generate summaries
-echo   3. Draft and send email to TEST_EMAIL_RECIPIENT from .env
-echo.
-echo Note: If TEST_EMAIL_RECIPIENT is not set, email will be logged only.
-echo.
-
-REM Run the agent
-python main.py
-set EXIT_CODE=%errorlevel%
-
-echo.
-if %EXIT_CODE% equ 0 (
-    echo ========================================
-    echo Agent completed successfully!
-    echo ========================================
-) else (
-    echo ========================================
-    echo Agent completed with errors (Exit code: %EXIT_CODE%)
-    echo ========================================
+REM Check if database tables exist, if not run migrations
+echo Checking database migrations...
+alembic current >nul 2>&1
+if errorlevel 1 (
+    echo Running database migrations...
+    alembic upgrade head
+    if errorlevel 1 (
+        echo WARNING: Database migration failed
+        echo Make sure DATABASE_URL is set in .env
+        echo For local development, you can use:
+        echo   DATABASE_URL=sqlite:///./local.db
+        echo.
+    )
 )
 
+REM Check if frontend dependencies are installed
+echo Checking frontend dependencies...
+if not exist frontend\node_modules (
+    echo Installing frontend dependencies...
+    cd frontend
+    call npm install
+    if errorlevel 1 (
+        echo ERROR: Failed to install frontend dependencies
+        echo Please make sure Node.js and npm are installed
+        cd ..
+        pause
+        exit /b 1
+    )
+    cd ..
+)
+
+echo.
+echo ============================================================
+echo Starting Servers...
+echo ============================================================
+echo.
+echo [BACKEND] Starting FastAPI on http://localhost:8080
+echo [FRONTEND] Starting Vite on http://localhost:5173
+echo.
+echo NOTE: Both servers are running. Close individual windows to stop.
+echo ============================================================
+echo.
+
+REM Determine which venv to use
+if exist .venv\Scripts\activate.bat (
+    set VENV_PATH=.venv
+) else (
+    set VENV_PATH=venv
+)
+
+REM Start both servers in the background
+start "AI Briefing - Backend" cmd /k "cd /d %CD% && %VENV_PATH%\Scripts\activate.bat && uvicorn app.main:app --reload --host 127.0.0.1 --port 8080"
+
+REM Wait a moment for backend to start
+timeout /t 3 /nobreak >nul
+
+start "AI Briefing - Frontend" cmd /k "cd /d %CD%\frontend && npm run dev"
+
+echo.
+echo ============================================================
+echo Both servers are starting in separate windows!
+echo ============================================================
+echo.
+echo Backend: http://localhost:8080/docs
+echo Frontend: http://localhost:5173
+echo.
+echo Close the individual server windows to stop them.
+echo You can close this window now.
+echo ============================================================
 pause
-exit /b %EXIT_CODE%

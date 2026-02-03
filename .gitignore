@@ -49,6 +49,7 @@ Thumbs.db
 # Testing
 .pytest_cache/
 .coverage
+coverage.xml
 htmlcov/
 
 # AWS
@@ -57,3 +58,15 @@ htmlcov/
 # Temp files (emails saved in mock mode)
 temp/
 *.eml
+
+# Node.js / Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+*.local
+
+# Database
+*.db
+*.db-journal
+local.db
