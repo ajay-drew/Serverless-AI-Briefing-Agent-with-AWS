@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Search, Loader2, ExternalLink, AlertCircle } from 'lucide-react'
 import { api, Article } from '../api/client'
 
 export default function QueryInterface() {
@@ -37,49 +38,49 @@ export default function QueryInterface() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-gray-800 mb-4">
-        Real-Time Search
-      </h2>
-      <p className="text-gray-600 mb-8">
-        Search for news articles on any topic and get AI-powered summaries instantly.
-      </p>
+    <div className="max-w-2xl mx-auto">
+      <div className="mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl font-semibold text-ink-primary tracking-tight mb-1">
+          Real-time search
+        </h2>
+        <p className="text-ink-secondary text-sm sm:text-base">
+          Get curated summaries on any topic.
+        </p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4 mb-8">
-        {/* Email */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Your Email
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            placeholder="your@email.com"
-          />
+      <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
+          <div className="sm:col-span-1">
+            <label className="block text-sm font-medium text-ink-primary mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-ink-primary placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent text-sm"
+              placeholder="you@example.com"
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <label className="block text-sm font-medium text-ink-primary mb-2">
+              Query
+            </label>
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              required
+              className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-ink-primary placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent text-sm"
+              placeholder="e.g. latest in quantum computing"
+            />
+          </div>
         </div>
 
-        {/* Search Query */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Search Query
-          </label>
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            placeholder="e.g., latest AI breakthroughs"
-          />
-        </div>
-
-        {/* Max Results */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Number of Results: {maxResults}
+          <label className="block text-sm font-medium text-ink-primary mb-2">
+            Results: <span className="text-ink-secondary font-normal">{maxResults}</span>
           </label>
           <input
             type="range"
@@ -89,74 +90,81 @@ export default function QueryInterface() {
             onChange={(e) => setMaxResults(Number(e.target.value))}
             className="w-full"
           />
+          <div className="flex justify-between text-xs text-ink-muted mt-1">
+            <span>1</span>
+            <span>10</span>
+          </div>
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
+          className="w-full py-3.5 sm:py-4 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm sm:text-base flex items-center justify-center gap-2"
         >
           {loading ? (
-            <span className="flex items-center justify-center">
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Searching...
-            </span>
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" aria-hidden />
+              Searching…
+            </>
           ) : (
-            'Search Now'
+            <>
+              <Search className="w-4 h-4" aria-hidden />
+              Search
+            </>
           )}
         </button>
       </form>
 
-      {/* Error Message */}
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-800">✗ {error}</p>
+        <div className="mb-6 p-4 sm:p-5 bg-surface border border-border-strong rounded-xl flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-ink-secondary shrink-0 mt-0.5" aria-hidden />
+          <p className="text-ink-primary text-sm sm:text-base">{error}</p>
         </div>
       )}
 
-      {/* Results */}
       {articles.length > 0 && (
         <div>
-          <h3 className="text-2xl font-bold text-gray-800 mb-4">
-            Results ({articles.length} of {totalFound} found)
-          </h3>
+          <div className="flex items-baseline gap-2 mb-4">
+            <h3 className="text-lg font-semibold text-ink-primary">
+              Results
+            </h3>
+            <span className="text-ink-muted text-sm">
+              {articles.length} of {totalFound}
+            </span>
+          </div>
           <div className="space-y-4">
             {articles.map((article, index) => (
-              <div
+              <article
                 key={index}
-                className="p-6 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg hover:shadow-lg transition-shadow"
+                className="p-4 sm:p-5 bg-surface border border-border rounded-xl"
               >
-                <h4 className="text-xl font-semibold text-gray-800 mb-2">
+                <h4 className="font-medium text-ink-primary text-sm sm:text-base mb-2">
                   {article.title}
                 </h4>
-                <p className="text-gray-700 mb-3">{article.summary}</p>
+                <p className="text-ink-secondary text-sm leading-relaxed mb-3">
+                  {article.summary}
+                </p>
                 <a
                   href={article.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-purple-600 hover:text-purple-800 font-medium inline-flex items-center"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:text-accent-hover transition-colors"
                 >
-                  Read more
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
+                  Read article
+                  <ExternalLink className="w-3.5 h-3.5" aria-hidden />
                 </a>
-              </div>
+              </article>
             ))}
           </div>
         </div>
       )}
 
       {!loading && articles.length === 0 && query && (
-        <div className="text-center py-12">
-          <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <p className="text-gray-600">No results found. Try a different search query.</p>
+        <div className="py-12 sm:py-16 text-center">
+          <Search className="w-10 h-10 text-ink-muted mx-auto mb-3" aria-hidden />
+          <p className="text-ink-secondary text-sm sm:text-base">
+            No results. Try a different query.
+          </p>
         </div>
       )}
     </div>

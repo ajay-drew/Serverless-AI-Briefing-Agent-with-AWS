@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { BarChart3, Loader2, AlertCircle, Mail, Calendar, Tag } from 'lucide-react'
 import { api, MetricsResponse } from '../api/client'
 
 export default function Metrics() {
@@ -31,85 +32,97 @@ export default function Metrics() {
       day: 'numeric',
       year: 'numeric',
       hour: 'numeric',
-      minute: 'numeric',
+      minute: '2-digit',
     })
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <h2 className="text-3xl font-bold text-gray-800 mb-4">
-        Your Briefing Metrics
-      </h2>
-      <p className="text-gray-600 mb-8">
-        View your briefing statistics and preferences.
-      </p>
+    <div className="max-w-xl mx-auto">
+      <div className="mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl font-semibold text-ink-primary tracking-tight mb-1">
+          Your metrics
+        </h2>
+        <p className="text-ink-secondary text-sm sm:text-base">
+          Articles sent and preferences.
+        </p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4 mb-8">
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Email Address
-          </label>
-          <div className="flex gap-2">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              placeholder="your@email.com"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
-            >
-              {loading ? 'Loading...' : 'View Metrics'}
-            </button>
-          </div>
+      <form onSubmit={handleSubmit} className="mb-6 sm:mb-8">
+        <label className="block text-sm font-medium text-ink-primary mb-2">
+          Email
+        </label>
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="flex-1 min-w-0 px-4 py-3 bg-surface border border-border rounded-lg text-ink-primary placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent text-sm"
+            placeholder="you@example.com"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="px-5 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm shrink-0 flex items-center justify-center gap-2"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" aria-hidden />
+                Loading…
+              </>
+            ) : (
+              'View metrics'
+            )}
+          </button>
         </div>
       </form>
 
-      {/* Error Message */}
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-800">✗ {error}</p>
+        <div className="mb-6 p-4 sm:p-5 bg-surface border border-border-strong rounded-xl flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-ink-secondary shrink-0 mt-0.5" aria-hidden />
+          <p className="text-ink-primary text-sm sm:text-base">{error}</p>
         </div>
       )}
 
-      {/* Metrics Display */}
       {metrics && (
-        <div className="space-y-6">
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-6 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg">
-              <div className="text-purple-600 text-sm font-semibold mb-2">
-                Total Articles Sent
+        <div className="space-y-5 sm:space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+            <div className="p-4 sm:p-5 bg-surface border border-border rounded-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <BarChart3 className="w-4 h-4 text-ink-tertiary" aria-hidden />
+                <span className="text-xs font-medium text-ink-tertiary uppercase tracking-wide">
+                  Articles sent
+                </span>
               </div>
-              <div className="text-4xl font-bold text-gray-800">
+              <p className="text-2xl sm:text-3xl font-semibold text-ink-primary">
                 {metrics.total_articles_sent}
-              </div>
+              </p>
             </div>
-
-            <div className="p-6 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg">
-              <div className="text-indigo-600 text-sm font-semibold mb-2">
-                Last Briefing
+            <div className="p-4 sm:p-5 bg-surface border border-border rounded-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <Calendar className="w-4 h-4 text-ink-tertiary" aria-hidden />
+                <span className="text-xs font-medium text-ink-tertiary uppercase tracking-wide">
+                  Last briefing
+                </span>
               </div>
-              <div className="text-lg font-semibold text-gray-800">
+              <p className="text-sm sm:text-base font-medium text-ink-primary">
                 {formatDate(metrics.last_briefing_at)}
-              </div>
+              </p>
             </div>
           </div>
 
-          {/* Topics */}
-          <div className="p-6 bg-white border border-gray-200 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Your Topics
-            </h3>
+          <div className="p-4 sm:p-5 bg-surface border border-border rounded-xl">
+            <div className="flex items-center gap-2 mb-3">
+              <Tag className="w-4 h-4 text-ink-tertiary" aria-hidden />
+              <h3 className="text-sm font-semibold text-ink-primary">
+                Topics
+              </h3>
+            </div>
             <div className="flex flex-wrap gap-2">
               {metrics.topics.map((topic, index) => (
                 <span
                   key={index}
-                  className="px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-medium"
+                  className="px-3 py-1.5 bg-surface-muted text-ink-secondary rounded-lg text-sm"
                 >
                   {topic}
                 </span>
@@ -117,23 +130,25 @@ export default function Metrics() {
             </div>
           </div>
 
-          {/* Account Info */}
-          <div className="p-6 bg-white border border-gray-200 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Account Information
-            </h3>
-            <div className="space-y-2 text-gray-700">
-              <div className="flex justify-between">
-                <span className="font-medium">Email:</span>
-                <span>{metrics.email}</span>
+          <div className="p-4 sm:p-5 bg-surface border border-border rounded-xl space-y-3">
+            <div className="flex items-center gap-2 mb-3">
+              <Mail className="w-4 h-4 text-ink-tertiary" aria-hidden />
+              <h3 className="text-sm font-semibold text-ink-primary">
+                Account
+              </h3>
+            </div>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between py-2 border-b border-border">
+                <span className="text-ink-tertiary">Email</span>
+                <span className="text-ink-primary">{metrics.email}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="font-medium">Member Since:</span>
-                <span>{formatDate(metrics.created_at)}</span>
+              <div className="flex justify-between py-2 border-b border-border">
+                <span className="text-ink-tertiary">Member since</span>
+                <span className="text-ink-primary">{formatDate(metrics.created_at)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="font-medium">Topics Subscribed:</span>
-                <span>{metrics.topics.length}</span>
+              <div className="flex justify-between py-2">
+                <span className="text-ink-tertiary">Topics</span>
+                <span className="text-ink-primary">{metrics.topics.length}</span>
               </div>
             </div>
           </div>
@@ -141,11 +156,11 @@ export default function Metrics() {
       )}
 
       {!loading && !metrics && !error && (
-        <div className="text-center py-12">
-          <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-          <p className="text-gray-600">Enter your email to view your metrics</p>
+        <div className="py-12 sm:py-16 text-center">
+          <BarChart3 className="w-10 h-10 text-ink-muted mx-auto mb-3" aria-hidden />
+          <p className="text-ink-secondary text-sm sm:text-base">
+            Enter your email to view metrics.
+          </p>
         </div>
       )}
     </div>

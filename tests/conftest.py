@@ -88,6 +88,27 @@ def sample_article():
 
 
 @pytest.fixture
+def sample_articles():
+    """List of sample articles for testing."""
+    return [
+        {
+            "title": "AI Breakthrough in Natural Language Processing",
+            "url": "https://example.com/ai-1",
+            "content": "Content about AI.",
+            "published_date": "2024-01-01",
+            "score": 0.95
+        },
+        {
+            "title": "Second Article Title",
+            "url": "https://example.com/article-2",
+            "content": "More content.",
+            "published_date": "2024-01-02",
+            "score": 0.85
+        },
+    ]
+
+
+@pytest.fixture
 def sample_user_preferences():
     """Sample user preferences for testing."""
     return {

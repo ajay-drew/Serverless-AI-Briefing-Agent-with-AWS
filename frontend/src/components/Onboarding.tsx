@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { CheckCircle, XCircle } from 'lucide-react'
 import { api } from '../api/client'
 
 const POPULAR_TOPICS = [
@@ -15,7 +16,7 @@ const POPULAR_TOPICS = [
 ]
 
 const TIMEZONES = [
-  'Asia/Kolkata',  // India (Mumbai/Delhi)
+  'Asia/Kolkata',
   'America/New_York',
   'America/Chicago',
   'America/Denver',
@@ -73,7 +74,6 @@ export default function Onboarding() {
       })
 
       setSuccess(true)
-      // Reset form
       setEmail('')
       setSelectedTopics([])
       setTimezone('Asia/Kolkata')
@@ -86,135 +86,131 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <h2 className="text-3xl font-bold text-gray-800 mb-4">
-        Get Daily AI Briefings
-      </h2>
-      <p className="text-gray-600 mb-8">
-        Sign up to receive personalized news briefings delivered to your inbox every day.
-      </p>
+    <div className="max-w-xl mx-auto">
+      <div className="mb-8">
+        <h2 className="text-xl sm:text-2xl font-semibold text-ink-primary tracking-tight mb-1">
+          Get Daily Briefings
+        </h2>
+        <p className="text-ink-secondary text-sm sm:text-base">
+          Curated intelligence delivered to your inbox at your chosen time.
+        </p>
+      </div>
 
       {success && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-green-800 font-semibold">
-            ✓ Registration successful!
-          </p>
-          <p className="text-green-700 text-sm mt-1">
-            You'll start receiving briefings at {briefingTime} {timezone}. Check your email for confirmation.
-          </p>
+        <div className="mb-6 p-4 sm:p-5 bg-surface border border-border rounded-xl flex items-start gap-3">
+          <CheckCircle className="w-5 h-5 text-ink-primary shrink-0 mt-0.5" aria-hidden />
+          <div className="min-w-0">
+            <p className="font-medium text-ink-primary text-sm sm:text-base">
+              Registration successful
+            </p>
+            <p className="text-ink-secondary text-sm mt-1">
+              Briefings at <span className="font-medium text-ink-primary">{briefingTime}</span> ({timezone}).
+            </p>
+          </div>
         </div>
       )}
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-800">✗ {error}</p>
+        <div className="mb-6 p-4 sm:p-5 bg-surface border border-border-strong rounded-xl flex items-start gap-3">
+          <XCircle className="w-5 h-5 text-ink-secondary shrink-0 mt-0.5" aria-hidden />
+          <p className="text-ink-primary text-sm sm:text-base">{error}</p>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Email */}
+      <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-7">
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Email Address
+          <label className="block text-sm font-medium text-ink-primary mb-2">
+            Email
           </label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            placeholder="your@email.com"
+            className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-ink-primary placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent text-sm sm:text-base"
+            placeholder="you@example.com"
           />
         </div>
 
-        {/* Topics */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Topics of Interest
+          <label className="block text-sm font-medium text-ink-primary mb-3">
+            Topics
           </label>
-          <div className="flex flex-wrap gap-2 mb-3">
+          <div className="flex flex-wrap gap-2 sm:gap-2.5 mb-3">
             {POPULAR_TOPICS.map((topic) => (
               <button
                 key={topic}
                 type="button"
                 onClick={() => handleTopicToggle(topic)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedTopics.includes(topic)
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    ? 'bg-accent text-white'
+                    : 'bg-surface-muted text-ink-secondary border border-border hover:border-border-strong hover:text-ink-primary'
                 }`}
               >
                 {topic}
               </button>
             ))}
           </div>
-
-          {/* Custom topic input */}
           <div className="flex gap-2">
             <input
               type="text"
               value={customTopic}
               onChange={(e) => setCustomTopic(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCustomTopic())}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              placeholder="Add custom topic..."
+              className="flex-1 min-w-0 px-4 py-2.5 bg-surface border border-border rounded-lg text-ink-primary placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent text-sm"
+              placeholder="Add topic..."
             />
             <button
               type="button"
               onClick={handleAddCustomTopic}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+              className="px-4 py-2.5 bg-surface border border-border rounded-lg text-ink-secondary hover:bg-surface-muted hover:text-ink-primary font-medium text-sm shrink-0"
             >
               Add
             </button>
           </div>
-
           {selectedTopics.length > 0 && (
-            <p className="text-sm text-gray-600 mt-2">
-              Selected: {selectedTopics.length} topic(s)
+            <p className="text-ink-muted text-xs mt-2">
+              {selectedTopics.length} topic{selectedTopics.length !== 1 ? 's' : ''} selected
             </p>
           )}
         </div>
 
-        {/* Timezone and Time */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-ink-primary mb-2">
               Timezone
             </label>
             <select
               value={timezone}
               onChange={(e) => setTimezone(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-ink-primary focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent text-sm sm:text-base cursor-pointer"
             >
               {TIMEZONES.map((tz) => (
-                <option key={tz} value={tz}>
-                  {tz}
-                </option>
+                <option key={tz} value={tz}>{tz}</option>
               ))}
             </select>
           </div>
-
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Briefing Time
+            <label className="block text-sm font-medium text-ink-primary mb-2">
+              Briefing time
             </label>
             <input
               type="time"
               value={briefingTime}
               onChange={(e) => setBriefingTime(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-ink-primary focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent text-sm sm:text-base"
             />
           </div>
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading || selectedTopics.length === 0}
-          className="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
+          className="w-full py-3.5 sm:py-4 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm sm:text-base"
         >
-          {loading ? 'Registering...' : 'Start Receiving Briefings'}
+          {loading ? 'Registering…' : 'Start receiving briefings'}
         </button>
       </form>
     </div>

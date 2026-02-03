@@ -3,7 +3,7 @@ import os
 import logging
 from datetime import datetime
 from typing import Optional
-from sqlalchemy import create_engine, Column, String, DateTime, JSON, ForeignKey, Text
+from sqlalchemy import create_engine, Column, String, DateTime, JSON, ForeignKey, Text, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, Session
 from sqlalchemy.pool import StaticPool
@@ -63,6 +63,17 @@ class UserArticle(Base):
     
     def __repr__(self):
         return f"<UserArticle(user='{self.user_email}', article='{self.article_id[:16]}...', sent_at='{self.sent_at}')>"
+
+
+class TavilyUsage(Base):
+    """Tracks each Tavily API search for rate limiting (daily/weekly/monthly)."""
+    __tablename__ = "tavily_usage"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    used_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<TavilyUsage(id={self.id}, used_at='{self.used_at}')>"
 
 
 class DatabaseManager:
