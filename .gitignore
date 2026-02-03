@@ -29,6 +29,8 @@ ENV/
 # Environment variables
 .env
 .env.local
+.cursor/
+.cursorrules
 
 # IDE
 .vscode/
